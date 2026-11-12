@@ -1,4 +1,4 @@
-package com.ruch.ruch_interview_platform;
+package com.ruch.interviewplatform;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

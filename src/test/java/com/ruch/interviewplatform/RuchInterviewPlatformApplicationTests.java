@@ -1,4 +1,4 @@
-package com.ruch.ruch_interview_platform;
+package com.ruch.interviewplatform;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
