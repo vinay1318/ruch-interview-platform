@@ -48,3 +48,6 @@ application-local.yaml
 ### Logs ###
 *.log
 logs/
+
+# Local configuration with database credentials
+/src/main/resources/application-local.properties
