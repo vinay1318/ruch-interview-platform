@@ -33,3 +33,50 @@ CREATE TABLE questions (
         REFERENCES chapters(id)
         ON DELETE RESTRICT
 );
+
+CREATE TABLE learning_progress (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    question_id BIGINT NOT NULL,
+    is_learned BOOLEAN NOT NULL DEFAULT FALSE,
+    learned_at TIMESTAMP NULL,
+
+    CONSTRAINT pk_learning_progress PRIMARY KEY (id),
+
+    CONSTRAINT uk_learning_progress_user_question
+        UNIQUE (user_id, question_id),
+
+    CONSTRAINT fk_learning_progress_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_learning_progress_question
+        FOREIGN KEY (question_id)
+        REFERENCES questions(id)
+        ON DELETE RESTRICT
+);
+
+CREATE TABLE revision_history (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    question_id BIGINT NOT NULL,
+    typed_answer TEXT,
+    score TINYINT NOT NULL,
+    revised_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_revision_history PRIMARY KEY (id),
+
+    CONSTRAINT chk_revision_history_score
+        CHECK (score BETWEEN 1 AND 5),
+
+    CONSTRAINT fk_revision_history_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_revision_history_question
+        FOREIGN KEY (question_id)
+        REFERENCES questions(id)
+        ON DELETE RESTRICT
+);
