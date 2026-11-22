@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import org.springframework.validation.FieldError;
 import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,7 +28,8 @@ public class GlobalExceptionHandler {
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred. Please try again later.",
                 request.getRequestURI(),
-                MDC.get("requestId")
+                MDC.get("requestId"),
+                null
         );
 
         log.error("An unexpected application error occurred", ex);
@@ -45,11 +49,61 @@ public class GlobalExceptionHandler {
                 "NOT_FOUND",
                 ex.getMessage(),
                 request.getRequestURI(),
-                MDC.get("requestId")
+                MDC.get("requestId"),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(errorResponse);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex,
+                                                                   HttpServletRequest request){
+
+        Map<String,String> fieldErrors = ex.getBindingResult()
+                                            .getFieldErrors()
+                                            .stream()
+                                            .collect(Collectors.toMap(
+                                                    FieldError::getField,
+                                                    FieldError::getDefaultMessage,
+                                                    (existing, replacement) -> existing
+                                            ));
+
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION_FAILED",
+                "Validation failed",
+                request.getRequestURI(),
+                MDC.get("requestId"),
+                fieldErrors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
