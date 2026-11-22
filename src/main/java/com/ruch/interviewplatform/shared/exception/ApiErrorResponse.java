@@ -3,6 +3,7 @@ package com.ruch.interviewplatform.shared.exception;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public record ApiErrorResponse(
         LocalDateTime timestamp,
@@ -10,6 +11,7 @@ public record ApiErrorResponse(
         String error,
         String message,
         String path,
-        String requestId
+        String requestId,
+        Map<String, String> fieldErrors
 ) {
 }
