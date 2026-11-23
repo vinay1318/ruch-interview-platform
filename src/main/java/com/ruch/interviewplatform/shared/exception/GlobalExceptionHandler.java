@@ -85,6 +85,24 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(ResourceConflictException.class)
+    public ResponseEntity<ApiErrorResponse> handleConflict(ResourceConflictException ex,
+                                                           HttpServletRequest request){
+
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "CONFLICT",
+                ex.getMessage(),
+                request.getRequestURI(),
+                MDC.get("requestId"),
+                null
+        );
+
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
 
 
 
